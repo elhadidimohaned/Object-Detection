@@ -33,6 +33,30 @@ def get_box_dimensions(outputs, height, width):
                 class_ids.append(class_id)
     return boxes, confs, class_ids
 
+
+# In[5]:
+
+
+def draw_labels(boxes, confs, class_ids, classes, img): 
+    indexes = cv2.dnn.NMSBoxes(boxes, confs, 0.65, 0.7)
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    for i in range(len(boxes)):
+        if i in indexes:
+            x, y, w, h = boxes[i]
+            label = str(classes[class_ids[i]])
+            cv2.rectangle(img, (x,y), (x+w, y+h), (0,255,255), 2)
+            cv2.putText(img, label, (x, y - 5), font, 0.5, (0,139,139), 2)
+    return img
+
+
+# In[6]:
+
+
+model, classes, output_layers = load_yolo()
+
+
+
+
 # In[7]:
 
 
