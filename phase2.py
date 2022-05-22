@@ -1,3 +1,38 @@
+# In[1]:
+
+
+import cv2
+import numpy as np 
+import argparse
+import time
+import moviepy
+from moviepy.editor import VideoFileClip
+import sys
+
+# In[4]:
+
+
+def get_box_dimensions(outputs, height, width):
+    boxes = []
+    confs = []
+    class_ids = []
+    for output in outputs:
+        for detect in output:
+            scores = detect[5:]
+            class_id = np.argmax(scores)
+            conf = scores[class_id]
+            if conf > 0.8:
+                center_x = int(detect[0] * width)
+                center_y = int(detect[1] * height)
+                w = int(detect[2] * width)
+                h = int(detect[3] * height)
+                x = int(center_x - w/2)
+                y = int(center_y - h / 2)
+                boxes.append([x, y, w, h])
+                confs.append(float(conf))
+                class_ids.append(class_id)
+    return boxes, confs, class_ids
+
 # In[7]:
 
 
