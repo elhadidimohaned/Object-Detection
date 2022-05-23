@@ -9,6 +9,30 @@ import moviepy
 from moviepy.editor import VideoFileClip
 import sys
 
+# In[2]:
+
+
+def load_yolo():
+    net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
+    classes = []
+    with open("coco.names", "r") as f:
+        classes = [line.strip() for line in f.readlines()] 
+        
+    output_layers = [layer_name for layer_name in net.getUnconnectedOutLayersNames()]
+    return net, classes, output_layers
+
+
+# In[3]:
+
+
+def detect_objects(img, net, outputLayers):
+    blob = cv2.dnn.blobFromImage(img, scalefactor=0.00392, size=(320, 320), mean=(0, 0, 0), swapRB=True, crop=False)
+    net.setInput(blob)
+    outputs = net.forward(outputLayers)
+    return blob, outputs
+
+
+
 # In[4]:
 
 
@@ -76,6 +100,4 @@ get_ipython().run_line_magic('time', 'processed_video.set_fps(10).write_videofil
 video_input1.reader.close()
 video_input1.audio.reader.close_proc()
 
-
-# In[ ]:
 
